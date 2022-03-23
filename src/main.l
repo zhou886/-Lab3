@@ -13,13 +13,13 @@ SPACE           [ ]
 UNSIGNED_SUF    u|U
 LONG_SUF        l|L
 LONGLONG_SUF    ll|LL
-INTEGER_SUF     ({UNSIGNED_SUF}?({LONG_SUF}|{LONGLONG_SUF})?)|(({LONG_SUF}|{LONGLONG_SUF}?){UNSIGNED_SUF}?)
+INTEGER_SUF     ({UNSIGNED_SUF}?({LONG_SUF}|{LONGLONG_SUF})?)|(({LONG_SUF}|{LONGLONG_SUF}){UNSIGNED_SUF})
 IDENTIFIER      (_|{LETTER})(_|{LETTER}|{DIGIT})*
-INTEGER_CONST   ([1-9]{DIGIT}*)|(0[0-7]*)|((0x|0X)[0-9A-F]*){INTEGER_SUF}?
+INTEGER_CONST   (([1-9]{DIGIT}*)|(0[0-7]*)|((0x|0X)[0-9A-F]*)){INTEGER_SUF}
 EXPONENT_PART   (e|E)[+-]?{DIGIT}+
 FLOAT_CONST     ({DIGIT}+\.{DIGIT}+){EXPONENT_PART}?(f|l|F|L)?
-CHAR_CONST      (L|u|U)?\'([^\"\\]|\'|\"|\?|\\|\a|\b|\f|\n|\r|\t|\v)\'
-STRING_LITERAL  (u8|u|U|L)?\"([^\"\\]+)\"
+CHAR_CONST      (L|u|U)?\'([^\"\\]|\\\'|\\\"|\\?|\\\\|\\a|\\b|\\f|\\n|\\r|\\t|\\v)\'
+STRING_LITERAL  (u8|u|U|L)?\"(([^\"\\]|\\\'|\\\"|\\?|\\\\|\\a|\\b|\\f|\\n|\\r|\\t|\\v)+)\"
 
 %%
 \n              {++row; col=0;}
@@ -126,7 +126,7 @@ int main() {
 }
 
 void printToken(char* cont, char* type) {
-    int end_col=col+strlen(cont);
+    int end_col=col+strlen(cont)-1;
     fprintf(fp,"[@%d,%d:%d='%s',<%s>,%d:%d]\n", cnt, col, end_col, cont, type, row, col);
     ++cnt;
     col+=strlen(cont);
